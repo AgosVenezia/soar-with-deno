@@ -1,82 +1,36 @@
-/*if (import.meta.main) {
-  Deno.serve((_req_) => {
-    (async () => {
-      for await (const el of Deno.readDir(".")) {
-        console.log(el.name);
-      }
-    })();
-    const hello = new Response("Hello, World!");
-    return hello;
-  });
-}*/
+import { Application, Router } from "@oak/oak";
+import { deleteAccount, login, register, updateAccount } from "~middleware";
+import checkAuth from "~crypto/auth";
 
-/*import { mutiplyWords } from "./utils/multiply-words.ts";
-
-if (import.meta.main) {
-  const multipliedWords = mutiplyWords(Deno.args[0].trim(), Number.parseInt(Deno.args[1].trim()));
-  console.log(multipliedWords)
-}*/
-
-/*import { Application, Router } from "jsr:@oak/oak@17.1.3";
 const router = new Router();
+const authRouter = new Router();
 const app = new Application();
+const controller = new AbortController();
 
-router.get("/", (ctx) => {
-    ctx.response.body = "Hello, World!";
-})
+router.get("/hello", (ctx) => {
+  ctx.response.body = "Hello, World!";
+});
+
+router.get("/close", (ctx) => {
+  controller.abort("User has invoked to close the connection");
+  ctx.response.body = "Bye!";
+});
+
+router.post("/register", register);
+router.post("/login", login);
+authRouter.put("/auth/update", updateAccount);
+authRouter.delete("/auth/delete", deleteAccount);
 
 app.use(router.allowedMethods());
 app.use(router.routes());
+app.use(authRouter.allowedMethods());
+app.use(checkAuth, authRouter.routes());
 
 if (import.meta.main) {
-    app.listen({ port: 8080 });
-}*/
-
-/*import { hello } from "https://gist.githubusercontent.com/uncomfyhalomacro/b5de275dfcbaeff1d2d89739541e4e6f/raw/648e323e4ab872cc2a6eeafdd1ccf46d8f6c6301/mod.ts";
-
-if (import.meta.main) {
-  hello();
-}*/
-
-/*//import { mutiplyWords } from "multiply-words";
-import { mutiplyWords } from "./utils/multiply-words.ts";
-
-if (import.meta.main) {
-  const multipliedWords = mutiplyWords(Deno.args[0].trim(), Number.parseInt(Deno.args[1].trim()));
-  console.log(multipliedWords)
-}*/
-
-/*import { mutiplyWords } from "./utils/multiply-words.ts";
-
-if (import.meta.main) {
-  const multipliedWords = mutiplyWords(
-    Deno.args[0].trim(),
-    Number.parseInt(Deno.args[1].trim()),
+  app.listen(
+    {
+      port: 5555,
+      signal: controller.signal,
+    },
   );
-  console.log(
-    multipliedWords,
-  );
-}*/
-
-/*function foo(s: any): any {
-  return "foo"
-}
-
-if (import.meta.main) {
-  let foobar = "bar";
-  const barsoap = 0;
-  console.log(foo("foo"), foobar);
-}*/
-
-if (import.meta.main) {
-  Deno.serve((_req_) => {
-    (async () => {
-      for await (const el of Deno.readDir(".")) {
-        console.log(el.name);
-      }
-    })();
-    //const hello = new Response("Hello, World!");
-    const hello = new Response("Hello, Stackie!");
-    return hello;
-  });
 }
